@@ -5,8 +5,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/falser/gate-trading/internal/config"
-	"github.com/falser/gate-trading/internal/models"
+	"github.com/falser101/gate-trading/internal/config"
+	"github.com/falser101/gate-trading/internal/models"
 )
 
 type Database struct {

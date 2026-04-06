@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/falser/gate-trading/internal/models"
-	"github.com/falser/gate-trading/internal/repository"
+	"github.com/falser101/gate-trading/internal/models"
+	"github.com/falser101/gate-trading/internal/repository"
 	"gorm.io/gorm"
 )
 

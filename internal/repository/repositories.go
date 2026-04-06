@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/falser/gate-trading/internal/models"
+	"github.com/falser101/gate-trading/internal/models"
 	"gorm.io/gorm"
 )
 

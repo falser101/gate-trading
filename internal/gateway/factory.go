@@ -3,7 +3,7 @@ package gateway
 import (
 	"sync"
 
-	"github.com/falser/gate-trading/pkg/gateapi"
+	"github.com/falser101/gate-trading/pkg/gateapi"
 )
 
 // Gate 客户端工厂（用于多用户支持）

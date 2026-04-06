@@ -10,10 +10,10 @@ import (
 
 	"github.com/shopspring/decimal"
 
-	"github.com/falser/gate-trading/internal/gateway"
-	"github.com/falser/gate-trading/internal/models"
-	"github.com/falser/gate-trading/internal/repository"
-	"github.com/falser/gate-trading/pkg/gateapi"
+	"github.com/falser101/gate-trading/internal/gateway"
+	"github.com/falser101/gate-trading/internal/models"
+	"github.com/falser101/gate-trading/internal/repository"
+	"github.com/falser101/gate-trading/pkg/gateapi"
 )
 
 // 策略类型

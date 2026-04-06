@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/falser/gate-trading/internal/service"
+	"github.com/falser101/gate-trading/internal/service"
 )
 
 func JWTAuth(authService *service.AuthService) gin.HandlerFunc {

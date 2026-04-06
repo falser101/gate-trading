@@ -1,4 +1,4 @@
-module github.com/falser/gate-trading
+module github.com/falser101/gate-trading
 
 go 1.23
 
@@ -49,4 +49,4 @@ require (
 )
 
 // 本地开发时使用本地路径，推送到 GitHub 后删除这一行
-replace github.com/falser/gate-trading => ./
+replace github.com/falser101/gate-trading => ./
