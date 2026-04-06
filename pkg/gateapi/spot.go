@@ -176,7 +176,9 @@ func (c *Client) GetCandlesticks(currencyPair, interval string, from, to int64, 
 	for _, c := range candles {
 		if len(c) >= 6 {
 			candle := Candlestick{}
-			candle.T, _ = c[0].(float64), nil
+			if t, ok := c[0].(float64); ok {
+				candle.T = int64(t)
+			}
 			candle.V, _ = decimal.NewFromString(fmt.Sprintf("%v", c[1]))
 			candle.C, _ = decimal.NewFromString(fmt.Sprintf("%v", c[2]))
 			candle.H, _ = decimal.NewFromString(fmt.Sprintf("%v", c[3]))

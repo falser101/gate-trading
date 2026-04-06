@@ -70,7 +70,7 @@ func NewStrategyEngine(
 }
 
 // 加载用户的所有策略
-func (e *Engine) LoadUserStrategies(userID uint) error {
+func (e *Engine) LoadUserStrategies(userID uint, user *models.User) error {
 	strategies, err := e.strategyRepos.GetByUserID(userID)
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (e *Engine) LoadUserStrategies(userID uint) error {
 
 	for _, s := range strategies {
 		if s.Status == StatusRunning {
-			if err := e.LoadStrategy(&s); err != nil {
+			if err := e.LoadStrategy(&s, user); err != nil {
 				return err
 			}
 		}
@@ -87,15 +87,9 @@ func (e *Engine) LoadUserStrategies(userID uint) error {
 }
 
 // 加载单个策略
-func (e *Engine) LoadStrategy(s *models.Strategy) error {
+func (e *Engine) LoadStrategy(s *models.Strategy, user *models.User) error {
 	e.mu.Lock()
 	defer e.mu.Unlock()
-
-	// 获取用户信息
-	var user models.User
-	if err := e.strategyRepos.db.Model(s).Association("User").Find(&user); err != nil {
-		return err
-	}
 
 	client := e.gateFactory.GetClient(user.GateAPIKey, user.GateAPISecret)
 
@@ -148,17 +142,17 @@ func (e *Engine) StopStrategy(id uint) error {
 }
 
 // 创建策略
-func (e *Engine) CreateStrategy(userID uint, sType, symbol string, config interface{}) (*models.Strategy, error) {
-	configData, err := json.Marshal(config)
-	if err != nil {
-		return nil, err
+func (e *Engine) CreateStrategy(userID uint, sType, symbol string, cfg interface{}) (*models.Strategy, error) {
+	configMap, ok := cfg.(map[string]interface{})
+	if !ok {
+		return nil, errors.New("invalid config type")
 	}
 
 	strategy := &models.Strategy{
 		UserID:   userID,
 		Type:     sType,
 		Symbol:   symbol,
-		Config:   configData,
+		Config:   configMap,
 		Status:   StatusStopped,
 		RunState: models.RunStateJSON{},
 	}
@@ -231,13 +225,27 @@ func (g *GridStrategy) Config() interface{}          { return g.strategy.Config 
 
 func (g *GridStrategy) Start(ctx context.Context) error {
 	// 解析配置
-	var cfg models.GridConfig
-	if err := json.Unmarshal(g.strategy.Config, &cfg); err != nil {
-		return err
+	cfg := g.strategy.Config
+	var gridCfg models.GridConfig
+
+	if v, ok := cfg["lower_price"].(string); ok {
+		gridCfg.LowerPrice = v
+	}
+	if v, ok := cfg["upper_price"].(string); ok {
+		gridCfg.UpperPrice = v
+	}
+	if v, ok := cfg["grid_count"].(float64); ok {
+		gridCfg.GridCount = int(v)
+	}
+	if v, ok := cfg["invest_amount"].(string); ok {
+		gridCfg.InvestAmount = v
+	}
+	if v, ok := cfg["profit_rate"].(string); ok {
+		gridCfg.ProfitRate = v
 	}
 
 	// 初始化网格
-	if err := g.initGrids(cfg); err != nil {
+	if err := g.initGrids(gridCfg); err != nil {
 		return err
 	}
 
@@ -417,9 +425,20 @@ func (d *DCAStrategy) Config() interface{} { return d.strategy.Config }
 
 func (d *DCAStrategy) Start(ctx context.Context) error {
 	// DCA 策略定时执行，这里只初始化
-	var cfg models.DCAConfig
-	if err := json.Unmarshal(d.strategy.Config, &cfg); err != nil {
-		return err
+	cfg := d.strategy.Config
+	var dcaCfg models.DCAConfig
+
+	if v, ok := cfg["invest_amount"].(string); ok {
+		dcaCfg.InvestAmount = v
+	}
+	if v, ok := cfg["interval"].(float64); ok {
+		dcaCfg.Interval = int(v)
+	}
+	if v, ok := cfg["target_price"].(string); ok {
+		dcaCfg.TargetPrice = v
+	}
+	if v, ok := cfg["max_buy_times"].(float64); ok {
+		dcaCfg.MaxBuyTimes = int(v)
 	}
 
 	d.engine.Log(d.strategy.ID, "strategy_started", "DCA strategy started", nil)
@@ -435,31 +454,42 @@ func (d *DCAStrategy) OnTick(ctx context.Context, price decimal.Decimal) error {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var cfg models.DCAConfig
-	if err := json.Unmarshal(d.strategy.Config, &cfg); err != nil {
-		return err
+	cfg := d.strategy.Config
+	var dcaCfg models.DCAConfig
+
+	if v, ok := cfg["invest_amount"].(string); ok {
+		dcaCfg.InvestAmount = v
+	}
+	if v, ok := cfg["interval"].(float64); ok {
+		dcaCfg.Interval = int(v)
+	}
+	if v, ok := cfg["target_price"].(string); ok {
+		dcaCfg.TargetPrice = v
+	}
+	if v, ok := cfg["max_buy_times"].(float64); ok {
+		dcaCfg.MaxBuyTimes = int(v)
 	}
 
 	// 检查是否达到买入间隔
-	if d.lastBuyTime != nil && time.Since(*d.lastBuyTime) < time.Duration(cfg.Interval)*time.Minute {
+	if d.lastBuyTime != nil && time.Since(*d.lastBuyTime) < time.Duration(dcaCfg.Interval)*time.Minute {
 		return nil
 	}
 
 	// 检查是否达到最大买入次数
-	if d.buyCount >= cfg.MaxBuyTimes {
+	if d.buyCount >= dcaCfg.MaxBuyTimes {
 		return nil
 	}
 
 	// 检查目标价格（如果设置了）
-	if cfg.TargetPrice != "" {
-		targetPrice, _ := decimal.NewFromString(cfg.TargetPrice)
+	if dcaCfg.TargetPrice != "" {
+		targetPrice, _ := decimal.NewFromString(dcaCfg.TargetPrice)
 		if price.GreaterThan(targetPrice) {
 			return nil // 当前价格高于目标价，不买入
 		}
 	}
 
 	// 执行买入
-	investAmount, _ := decimal.NewFromString(cfg.InvestAmount)
+	investAmount, _ := decimal.NewFromString(dcaCfg.InvestAmount)
 	resp, err := d.client.MarketBuy(d.strategy.Symbol, investAmount)
 	if err != nil {
 		d.engine.Log(d.strategy.ID, "order_error", fmt.Sprintf("DCA buy failed: %v", err), nil)

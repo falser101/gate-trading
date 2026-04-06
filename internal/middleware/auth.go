@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/falser101/gate-trading/internal/service"
+	"github.com/falser101/gate-trading/internal/service/auth"
 )
 
-func JWTAuth(authService *service.AuthService) gin.HandlerFunc {
+func JWTAuth(authService *auth.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
