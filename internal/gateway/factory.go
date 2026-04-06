@@ -1,26 +1,27 @@
 package gateway
 
 import (
+	"context"
 	"sync"
 
-	"github.com/falser101/gate-trading/pkg/gateapi"
+	gateapi "github.com/gate/gateapi-go/v7"
 )
 
 // Gate 客户端工厂（用于多用户支持）
 type GateClientFactory struct {
-	clients map[string]*gateapi.Client
+	clients map[string]*gateapi.APIClient
 	mu      sync.RWMutex
 	baseURL string
 }
 
 func NewGateClientFactory(baseURL string) *GateClientFactory {
 	return &GateClientFactory{
-		clients: make(map[string]*gateapi.Client),
+		clients: make(map[string]*gateapi.APIClient),
 		baseURL: baseURL,
 	}
 }
 
-func (f *GateClientFactory) GetClient(apiKey, apiSecret string) *gateapi.Client {
+func (f *GateClientFactory) GetClient(apiKey, apiSecret string) *gateapi.APIClient {
 	key := apiKey + ":" + apiSecret
 
 	f.mu.RLock()
@@ -33,7 +34,26 @@ func (f *GateClientFactory) GetClient(apiKey, apiSecret string) *gateapi.Client 
 	f.mu.Lock()
 	defer f.mu.Unlock()
 
-	client := gateapi.NewClient(apiKey, apiSecret, f.baseURL)
+	client := f.createClient(apiKey, apiSecret)
 	f.clients[key] = client
 	return client
+}
+
+func (f *GateClientFactory) createClient(apiKey, apiSecret string) *gateapi.APIClient {
+	cfg := gateapi.NewConfiguration()
+	// 设置基础 URL
+	cfg.BasePath = f.baseURL
+	// 设置 API Key 和 Secret
+	cfg.Key = apiKey
+	cfg.Secret = apiSecret
+
+	return gateapi.NewAPIClient(cfg)
+}
+
+// 获取带认证的 context
+func (f *GateClientFactory) GetContext(apiKey, apiSecret string) context.Context {
+	return context.WithValue(context.Background(), gateapi.ContextGateAPIV4, gateapi.GateAPIV4{
+		Key:    apiKey,
+		Secret: apiSecret,
+	})
 }

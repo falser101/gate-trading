@@ -82,6 +82,10 @@ func (r *StrategyRepository) Delete(id uint) error {
 	return r.db.Delete(&models.Strategy{}, id).Error
 }
 
+func (r *StrategyRepository) GetDB() *gorm.DB {
+	return r.db
+}
+
 type OrderRepository struct {
 	db *gorm.DB
 }

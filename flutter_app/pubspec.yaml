@@ -1,0 +1,49 @@
+name: gate_trading
+description: "Gate.io 自动交易系统 Flutter 客户端"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # 状态管理
+  flutter_riverpod: ^2.4.0
+
+  # 网络请求
+  dio: ^5.4.0
+  web_socket_channel: ^2.4.0
+
+  # 本地存储
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+
+  # 图表
+  fl_chart: ^0.66.0
+
+  # 导航
+  go_router: ^13.0.0
+
+  # 工具
+  intl: ^0.18.1
+  json_annotation: ^4.8.1
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.8
+  json_serializable: ^6.7.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
