@@ -5,8 +5,7 @@
 *.so
 *.dylib
 gate-trading
-api
-worker
+__debug_bin*
 
 # Test files
 *.test
