@@ -32,5 +32,9 @@ func (d *Database) AutoMigrate() error {
 		&models.Order{},
 		&models.Trade{},
 		&models.StrategyLog{},
+		&models.PlatformCookie{},
+		&models.CopyTrader{},
+		&models.CopyTraderDailyStats{},
+		&models.AdminNotification{},
 	)
 }

@@ -1,0 +1,104 @@
+{
+  "tasks": {
+    {
+      "label": "Run API Server",
+      "command": "go run ./cmd/api/",
+      "type": "shell",
+      "env": {
+        "APP_ENV": "development",
+        "APP_PORT": "8080",
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Run CopyTrading Worker",
+      "command": "go run ./cmd/copytrading-sync-worker/main.go",
+      "type": "shell",
+      "env": {
+        "COPYTRADING_SYNC_INTERVAL": "30",
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Init CopyTrading Cookie",
+      "command": "go run ./cmd/copytrading-sync-worker/main.go init ${token} ${csrftoken} ${uid}",
+      "type": "shell",
+      "group": "build",
+      "prompt": "Enter token, csrftoken, uid separated by space:",
+    },
+    {
+      "label": "Test CopyTrading Cookie",
+      "command": "go run ./cmd/copytrading-sync-worker/main.go test",
+      "type": "shell",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Build All",
+      "command": "cd /home/falser/projects/gate && go build ./cmd/api/ && go build ./cmd/copytrading-sync-worker/",
+      "type": "shell",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Test API Health",
+      "command": "curl -s http://localhost:8080/api/health | jq .",
+      "type": "shell",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+      },
+    },
+    {
+      "label": "List CopyTraders",
+      "command": "curl -s 'http://localhost:8080/api/copytrading/traders?page=1&page_size=10' -H 'Authorization: Bearer YOUR_TOKEN' | jq .",
+      "type": "shell",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+      },
+    },
+  },
+  "debuggers": {
+    {
+      "name": "Go API Debug",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/api",
+      "env": {
+        "APP_ENV": "development",
+        "APP_PORT": "8080",
+      },
+      "showLog": true,
+    },
+    {
+      "name": "Go Worker Debug",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/copytrading-sync-worker",
+      "args": ["test"],
+      "env": {
+        "COPYTRADING_SYNC_INTERVAL": "30",
+      },
+      "showLog": true,
+    },
+  },
+}

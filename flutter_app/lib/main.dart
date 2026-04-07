@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'core/router.dart';
 import 'core/theme/app_theme.dart';
+import 'presentation/providers/copytrading_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 初始化认证状态
   await initAuthState();
   runApp(
-    const ProviderScope(
-      child: GateTradingApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CopytradingProvider()),
+      ],
+      child: const GateTradingApp(),
     ),
   );
 }

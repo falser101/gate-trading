@@ -12,6 +12,7 @@ import '../presentation/screens/settings/settings_screen.dart';
 import '../presentation/screens/settings/api_key_screen.dart';
 import '../presentation/screens/account/account_screen.dart';
 import '../presentation/screens/futures/futures_screen.dart';
+import '../presentation/screens/copytrading/copytrading_screen.dart';
 import '../data/repositories/auth_repository.dart';
 import '../core/network/api_client.dart';
 
@@ -104,6 +105,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/futures',
       builder: (context, state) => const FuturesScreen(),
+    ),
+    GoRoute(
+      path: '/copytrading',
+      builder: (context, state) => const CopytradingScreen(),
     ),
   ],
 );

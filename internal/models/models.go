@@ -132,3 +132,89 @@ type StrategyLog struct {
 func (StrategyLog) TableName() string {
 	return "strategy_logs"
 }
+
+// ==================== Copy Trading Models ====================
+
+// PlatformCookie 平台级 Gate.io Cookie 配置（管理员绑定）
+type PlatformCookie struct {
+	ID           uint           `gorm:"primarykey" json:"id"`
+	Token        string         `gorm:"size:2048;not null" json:"-"` // 加密存储
+	CsrfToken    string         `gorm:"size:256;not null" json:"-"`  // 加密存储
+	Uid          string         `gorm:"size:50;not null" json:"uid"`
+	ExpiresAt    *time.Time     `gorm:"index" json:"expires_at"`
+	Status       string         `gorm:"size:20;default:'active'" json:"status"` // active/expired
+	LastSyncedAt *time.Time     `json:"last_synced_at"`
+	ErrorMsg     string         `gorm:"size:512" json:"error_msg"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
+}
+
+func (PlatformCookie) TableName() string {
+	return "platform_cookies"
+}
+
+// CopyTrader 交易员信息
+type CopyTrader struct {
+	ID              uint        `gorm:"primarykey" json:"id"`
+	TraderID        string      `gorm:"size:100;not null;uniqueIndex" json:"trader_id"`
+	TraderName      string      `gorm:"size:100" json:"trader_name"`
+	Avatar          string      `gorm:"size:512" json:"avatar"`
+	Exchange        string      `gorm:"size:20;default:'gate'" json:"exchange"`
+	Status          string      `gorm:"size:20;default:'running'" json:"status"`
+
+	// 统计数据
+	Cycle           string      `gorm:"size:20" json:"cycle"`                   // day/week/month/all
+	TotalPnl        string      `gorm:"size:32" json:"total_pnl"`
+	TotalRoi        string      `gorm:"size:32" json:"total_roi"`
+	FollowProfit    string      `gorm:"size:32" json:"follow_profit"`
+	FollowRoi       string      `gorm:"size:32" json:"follow_roi"`
+	WinRate         string      `gorm:"size:16" json:"win_rate"`
+	FollowerCount   int         `gorm:"default:0" json:"follower_count"`
+	PositionCount   int         `gorm:"default:0" json:"position_count"`
+	MaxDrawdown     string      `gorm:"size:32" json:"max_drawdown"`
+	AvgLeverage     string      `gorm:"size:16" json:"avg_leverage"`
+
+	// 属性
+	IsCurated       bool        `gorm:"default:false" json:"is_curated"`
+	IsPrivate       bool        `gorm:"default:false" json:"is_private"`
+	StyleLabels     string      `gorm:"type:jsonb" json:"style_labels"` // JSON 数组
+
+	// 同步
+	LastSyncedAt    *time.Time  `gorm:"index" json:"last_synced_at"`
+	CreatedAt       time.Time   `json:"created_at"`
+	UpdatedAt       time.Time   `json:"updated_at"`
+}
+
+func (CopyTrader) TableName() string {
+	return "copy_traders"
+}
+
+// CopyTraderDailyStats 交易员每日统计快照
+type CopyTraderDailyStats struct {
+	ID              uint      `gorm:"primarykey" json:"id"`
+	TraderID        string    `gorm:"size:100;not null;index" json:"trader_id"`
+	Date            string    `gorm:"size:10;not null;index" json:"date"` // YYYY-MM-DD
+	TotalPnl        string    `gorm:"size:32" json:"total_pnl"`
+	TotalRoi        string    `gorm:"size:32" json:"total_roi"`
+	FollowProfit    string    `gorm:"size:32" json:"follow_profit"`
+	FollowerCount   int       `gorm:"default:0" json:"follower_count"`
+	CreatedAt       time.Time `json:"created_at"`
+}
+
+func (CopyTraderDailyStats) TableName() string {
+	return "copy_trader_daily_stats"
+}
+
+// AdminNotification 管理员通知
+type AdminNotification struct {
+	ID        uint           `gorm:"primarykey" json:"id"`
+	Type      string         `gorm:"size:50;not null" json:"type"` // cookie_expiry, system, etc.
+	Message   string         `gorm:"size:512;not null" json:"message"`
+	IsRead    bool           `gorm:"default:false" json:"is_read"`
+	CreatedAt time.Time      `json:"created_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+}
+
+func (AdminNotification) TableName() string {
+	return "admin_notifications"
+}

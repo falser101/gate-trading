@@ -1,0 +1,96 @@
+{
+  "debug": {
+    "configurations": [
+      {
+        "name": "Go API Debug",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceFolder}/cmd/api",
+        "env": {
+          "APP_ENV": "development",
+          "APP_PORT": "8080"
+        },
+        "showLog": true
+      },
+      {
+        "name": "Go Worker Debug",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceFolder}/cmd/copytrading-sync-worker",
+        "args": ["test"],
+        "env": {
+          "COPYTRADING_SYNC_INTERVAL": "30"
+        },
+        "showLog": true
+      },
+      {
+        "name": "Go Worker Run",
+        "type": "go",
+        "request": "launch",
+        "mode": "run",
+        "program": "${workspaceFolder}/cmd/copytrading-sync-worker",
+        "env": {
+          "COPYTRADING_SYNC_INTERVAL": "30"
+        }
+      }
+    ],
+    "compound": [
+      {
+        "name": "API + Worker",
+        "configurations": ["Go API Debug", "Go Worker Run"]
+      }
+    ]
+  },
+  "tasks": {
+    "CopyTrading": [
+      {
+        "label": "Init Cookie",
+        "command": "go run ./cmd/copytrading-sync-worker/main.go init ${token} ${csrftoken} ${uid}",
+        "type": "shell",
+        "group": "build"
+      },
+      {
+        "label": "Test Cookie",
+        "command": "go run ./cmd/copytrading-sync-worker/main.go test",
+        "type": "shell",
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "Manual Sync",
+        "command": "go run ./cmd/copytrading-sync-worker/main.go sync",
+        "type": "shell",
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "Run API Server",
+        "command": "go run ./cmd/api/",
+        "type": "shell",
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "Build All",
+        "command": "cd /home/falser/projects/gate && go build ./cmd/api/ && go build ./cmd/copytrading-sync-worker/",
+        "type": "shell",
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      }
+    ]
+  }
+}

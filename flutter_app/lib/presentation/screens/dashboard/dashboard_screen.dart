@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/strategy_provider.dart';
 import '../../widgets/strategy/strategy_card.dart';
 
-class DashboardScreen extends ConsumerStatefulWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+  State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
     // 延迟加载策略，等待认证状态确认
     Future.delayed(Duration.zero, () {
       if (mounted) {
-        ref.read(strategiesProvider.notifier).loadStrategies();
+        context.read<StrategyProvider>().loadStrategies();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authProvider);
-    final strategiesState = ref.watch(strategiesProvider);
+    final authState = context.watch<AuthProvider>();
+    final strategiesState = context.watch<StrategyProvider>();
     final user = authState.user;
 
     return Scaffold(
@@ -42,7 +42,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await ref.read(strategiesProvider.notifier).loadStrategies();
+          await context.read<StrategyProvider>().loadStrategies();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -94,12 +94,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       onTap: () => context.push('/strategies/${strategy.id}'),
                       onToggle: () {
                         if (strategy.status == 'running') {
-                          ref
-                              .read(strategiesProvider.notifier)
+                          context
+                              .read<StrategyProvider>()
                               .stopStrategy(strategy.id);
                         } else {
-                          ref
-                              .read(strategiesProvider.notifier)
+                          context
+                              .read<StrategyProvider>()
                               .startStrategy(strategy.id);
                         }
                       },
@@ -113,10 +113,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         onTap: (index) {
-          if (index == 1) context.push('/futures');
-          if (index == 2) context.push('/market');
-          if (index == 3) context.push('/orders');
-          if (index == 4) context.push('/settings');
+          if (index == 1) context.push('/copytrading');
+          if (index == 2) context.push('/futures');
+          if (index == 3) context.push('/market');
+          if (index == 4) context.push('/orders');
+          if (index == 5) context.push('/settings');
         },
         items: const [
           BottomNavigationBarItem(
@@ -124,12 +125,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             label: '首页',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
-            label: '合约',
+            icon: Icon(Icons.people),
+            label: '跟单',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.show_chart),
-            label: '行情',
+            label: '合约',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long),
