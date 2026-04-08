@@ -1,55 +1,46 @@
 <template>
   <view class="login-container">
     <view class="login-header">
-      <image src="/static/images/logo.png" class="logo" mode="aspectFit" />
       <text class="title">Gate Copy Trading</text>
       <text class="subtitle">专业跟单交易平台</text>
     </view>
 
     <view class="login-form">
-      <u-form :model="form" ref="formRef" label-width="0">
-        <u-form-item prop="email">
-          <u-input
-            v-model="form.email"
-            placeholder="请输入邮箱"
-            type="email"
-            prefix-icon="envelope"
-            :border="false"
-            class="input-field"
-          />
-        </u-form-item>
+      <view class="input-item">
+        <input
+          v-model="form.email"
+          type="text"
+          placeholder="请输入邮箱"
+          class="input-field"
+        />
+      </view>
 
-        <u-form-item prop="password">
-          <u-input
-            v-model="form.password"
-            placeholder="请输入密码"
-            type="password"
-            prefix-icon="lock"
-            :border="false"
-            class="input-field"
-          />
-        </u-form-item>
-      </u-form>
+      <view class="input-item">
+        <input
+          v-model="form.password"
+          type="password"
+          placeholder="请输入密码"
+          class="input-field"
+        />
+      </view>
 
       <view class="login-buttons">
-        <u-button
+        <button
           type="primary"
-          size="large"
           :loading="loading"
           @click="handleLogin"
           class="login-btn"
         >
           登录
-        </u-button>
+        </button>
 
-        <u-button
-          type="info"
-          size="large"
+        <button
+          type="default"
           @click="goToRegister"
           class="register-btn"
         >
           注册账号
-        </u-button>
+        </button>
       </view>
     </view>
   </view>
@@ -60,7 +51,6 @@ import { ref, reactive } from 'vue'
 import { useAuthStore } from '@/store/modules/auth'
 
 const authStore = useAuthStore()
-const formRef = ref<any>(null)
 const loading = ref(false)
 
 const form = reactive({
@@ -86,7 +76,6 @@ const handleLogin = async () => {
         title: '登录成功',
         icon: 'success'
       })
-      // 跳转到首页
       setTimeout(() => {
         uni.switchTab({
           url: '/pages/index/index'
@@ -126,12 +115,6 @@ const goToRegister = () => {
   text-align: center;
   margin-bottom: 80rpx;
 
-  .logo {
-    width: 120rpx;
-    height: 120rpx;
-    margin-bottom: 30rpx;
-  }
-
   .title {
     display: block;
     font-size: 48rpx;
@@ -153,19 +136,26 @@ const goToRegister = () => {
   padding: 40rpx;
   box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.1);
 
-  .input-field {
-    padding: 24rpx 0;
-    font-size: 32rpx;
+  .input-item {
+    margin-bottom: 24rpx;
+
+    .input-field {
+      padding: 24rpx;
+      font-size: 32rpx;
+      background: #F5F5F5;
+      border-radius: 12rpx;
+    }
   }
 }
 
 .login-buttons {
-  margin-top: 60rpx;
+  margin-top: 40rpx;
 
   .login-btn {
-    margin-bottom: 24rpx;
+    margin-bottom: 20rpx;
     background: linear-gradient(135deg, #00DC82 0%, #00C775 100%);
     border: none;
+    color: #FFFFFF;
   }
 
   .register-btn {

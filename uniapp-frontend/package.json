@@ -2,30 +2,26 @@
   "name": "gate-copytrading",
   "version": "1.0.0",
   "description": "Gate.io Copy Trading UniApp Frontend",
-  "main": "main.js",
+  "main": "src/main.ts",
   "scripts": {
-    "dev:mp-weixin": "vite --mode development",
-    "dev:h5": "vite --mode development",
-    "build:mp-weixin": "vite build --mode production",
-    "build:h5": "vite build --mode production"
+    "dev:h5": "vite",
+    "dev:mp-weixin": "vite --mode mp-weixin",
+    "build:h5": "vite build",
+    "build:mp-weixin": "vite build --mode mp-weixin"
   },
   "dependencies": {
     "pinia": "^2.1.7",
-    "pinia-plugin-persistedstate": "^3.2.1",
-    "uview-ui": "^2.0.37",
-    "ucharts": "^1.2.4"
+    "vue": "^3.4.15"
   },
   "devDependencies": {
     "@dcloudio/types": "^3.4.8",
-    "@dcloudio/uni-automator": "3.0.0-4010520241114001",
-    "@dcloudio/uni-cli-shared": "3.0.0-4010520241114001",
-    "@dcloudio/uni-components": "3.0.0-4010520241114001",
-    "@dcloudio/uni-h5": "3.0.0-4010520241114001",
-    "@dcloudio/uni-mp-weixin": "3.0.0-4010520241114001",
-    "@dcloudio/vite-plugin-uni": "3.0.0-4010520241114001",
+    "@dcloudio/uni-app": "^3.0.0-4010120240305001-1",
+    "@dcloudio/uni-cli-shared": "^3.0.0-4010120240305001-1",
+    "@dcloudio/uni-h5": "^3.0.0-4010120240305001-1",
+    "@dcloudio/uni-mp-weixin": "^3.0.0-4010120240305001-1",
+    "@dcloudio/vite-plugin-uni": "^3.0.0-4010120240305001-1",
     "@types/node": "^20.11.5",
     "typescript": "^5.3.3",
-    "vue": "^3.4.15",
     "vite": "^5.0.0"
   }
 }

@@ -17,17 +17,19 @@
     <!-- 排序栏 -->
     <view class="sort-bar">
       <text class="sort-label">排序:</text>
-      <view
-        v-for="item in sortOptions"
-        :key="item.value"
-        :class="['sort-item', currentSort === item.value ? 'active' : '']"
-        @click="selectSort(item.value)"
-      >
-        {{ item.label }}
-        <text v-if="currentSort === item.value" class="sort-icon">
-          {{ sortDirection === 'desc' ? '↓' : '↑' }}
-        </text>
-      </view>
+      <scroll-view scroll-x class="sort-scroll">
+        <view
+          v-for="item in sortOptions"
+          :key="item.value"
+          :class="['sort-item', currentSort === item.value ? 'active' : '']"
+          @click="selectSort(item.value)"
+        >
+          {{ item.label }}
+          <text v-if="currentSort === item.value" class="sort-icon">
+            {{ sortDirection === 'desc' ? '↓' : '↑' }}
+          </text>
+        </view>
+      </scroll-view>
     </view>
 
     <!-- 交易员列表 -->
@@ -90,18 +92,16 @@
 
     <!-- 空状态 -->
     <view v-if="!loading && traderList.length === 0" class="empty-state">
-      <image src="/static/images/empty.png" class="empty-image" mode="aspectFit" />
       <text class="empty-text">暂无交易员数据</text>
     </view>
 
     <!-- 加载状态 -->
     <view v-if="loading" class="loading-state">
-      <u-loading mode="circle" size="40"></u-loading>
-      <text class="loading-text">加载中...</text>
+      <text>加载中...</text>
     </view>
 
     <!-- 加载更多 -->
-    <view v-if="hasMore" class="load-more" @click="loadMore">
+    <view v-if="hasMore && !loading" class="load-more" @click="loadMore">
       <text>加载更多</text>
     </view>
   </view>
@@ -170,8 +170,6 @@ const loadTraderList = async () => {
 
   if (currentFilter.value === 'running') {
     params.status = 'running'
-  } else if (currentFilter.value === 'curated') {
-    // 精选交易员需要特殊处理
   }
 
   await traderStore.fetchTraderList(params)
@@ -211,15 +209,8 @@ const parseLabels = (labelsStr: string) => {
   }
 }
 
-// 下拉刷新
 onMounted(() => {
   loadTraderList()
-})
-
-// 启用下拉刷新
-uni.setNavigationBarColor({
-  frontColor: '#ffffff',
-  backgroundColor: '#00DC82'
 })
 </script>
 
@@ -230,7 +221,6 @@ uni.setNavigationBarColor({
   padding-bottom: 120rpx;
 }
 
-// 筛选栏
 .filter-bar {
   background: #FFFFFF;
   padding: 20rpx 0;
@@ -248,7 +238,6 @@ uni.setNavigationBarColor({
       color: #666666;
       border-radius: 30rpx;
       background: #F5F5F5;
-      transition: all 0.3s;
 
       &.active {
         background: #00DC82;
@@ -258,7 +247,6 @@ uni.setNavigationBarColor({
   }
 }
 
-// 排序栏
 .sort-bar {
   display: flex;
   align-items: center;
@@ -272,33 +260,37 @@ uni.setNavigationBarColor({
     margin-right: 20rpx;
   }
 
-  .sort-item {
-    display: flex;
-    align-items: center;
-    padding: 8rpx 20rpx;
-    margin-right: 16rpx;
-    font-size: 26rpx;
-    color: #666666;
-    border-radius: 20rpx;
-    background: #F5F5F5;
+  .sort-scroll {
+    flex: 1;
+    white-space: nowrap;
 
-    &.active {
-      background: #00DC82;
-      color: #FFFFFF;
+    .sort-item {
+      display: inline-flex;
+      align-items: center;
+      padding: 8rpx 20rpx;
+      margin-right: 16rpx;
+      font-size: 26rpx;
+      color: #666666;
+      border-radius: 20rpx;
+      background: #F5F5F5;
+
+      &.active {
+        background: #00DC82;
+        color: #FFFFFF;
+
+        .sort-icon {
+          color: #FFFFFF;
+        }
+      }
 
       .sort-icon {
-        color: #FFFFFF;
+        margin-left: 6rpx;
+        color: #666666;
       }
-    }
-
-    .sort-icon {
-      margin-left: 6rpx;
-      color: #666666;
     }
   }
 }
 
-// 交易员列表
 .trader-list {
   padding: 20rpx;
 
@@ -419,16 +411,9 @@ uni.setNavigationBarColor({
   }
 }
 
-// 空状态
 .empty-state {
   text-align: center;
   padding: 120rpx 0;
-
-  .empty-image {
-    width: 300rpx;
-    height: 300rpx;
-    margin-bottom: 30rpx;
-  }
 
   .empty-text {
     font-size: 28rpx;
@@ -436,21 +421,16 @@ uni.setNavigationBarColor({
   }
 }
 
-// 加载状态
 .loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  text-align: center;
   padding: 60rpx 0;
 
-  .loading-text {
-    margin-top: 20rpx;
+  text {
     font-size: 26rpx;
     color: #999999;
   }
 }
 
-// 加载更多
 .load-more {
   text-align: center;
   padding: 30rpx;

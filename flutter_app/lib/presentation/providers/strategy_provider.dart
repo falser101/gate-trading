@@ -1,17 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import '../../core/network/api_client.dart';
 import '../../data/repositories/strategy_repository.dart';
 import '../../data/models/strategy_model.dart';
-
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
-
-final strategyRepositoryProvider = Provider<StrategyRepository>((ref) {
-  return StrategyRepository(ref.watch(apiClientProvider));
-});
-
-final strategiesProvider = StateNotifierProvider<StrategiesNotifier, StrategiesState>((ref) {
-  return StrategiesNotifier(ref.watch(strategyRepositoryProvider));
-});
 
 class StrategiesState {
   final bool isLoading;
@@ -37,18 +27,28 @@ class StrategiesState {
   }
 }
 
-class StrategiesNotifier extends StateNotifier<StrategiesState> {
+class StrategyProvider extends ChangeNotifier {
   final StrategyRepository _repository;
+  StrategiesState _state = StrategiesState();
 
-  StrategiesNotifier(this._repository) : super(StrategiesState());
+  StrategyProvider({ApiClient? apiClient})
+      : _repository = StrategyRepository(apiClient ?? ApiClient());
+
+  StrategiesState get state => _state;
+  List<StrategyModel> get strategies => _state.strategies;
+  bool get isLoading => _state.isLoading;
+  String? get error => _state.error;
 
   Future<void> loadStrategies() async {
-    state = state.copyWith(isLoading: true, error: null);
+    _state = _state.copyWith(isLoading: true, error: null);
+    notifyListeners();
     try {
       final strategies = await _repository.getStrategies();
-      state = state.copyWith(isLoading: false, strategies: strategies);
+      _state = _state.copyWith(isLoading: false, strategies: strategies);
+      notifyListeners();
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      _state = _state.copyWith(isLoading: false, error: e.toString());
+      notifyListeners();
     }
   }
 

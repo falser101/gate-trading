@@ -14,18 +14,6 @@
       </scroll-view>
     </view>
 
-    <!-- 收益曲线图 -->
-    <view class="chart-section">
-      <view class="section-title">收益走势</view>
-      <view class="chart-wrapper">
-        <canvas
-          type="2d"
-          id="pnlChart"
-          class="chart-canvas"
-        ></canvas>
-      </view>
-    </view>
-
     <!-- 统计数据 -->
     <view class="stats-section">
       <view class="section-title">统计摘要</view>
@@ -69,14 +57,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useTraderStore } from '@/store/modules/trader'
 
 const traderStore = useTraderStore()
 const traderId = ref('')
 
-// 日期选项
 const dateOptions = ref([
   { label: '7 天', value: '7' },
   { label: '15 天', value: '15' },
@@ -87,19 +74,16 @@ const currentDateRange = ref('30')
 
 const stats = ref<any[]>([])
 
-// 统计数据
 const maxPnl = ref('0')
 const minPnl = ref('0')
 const avgPnl = ref('0')
 const positiveDays = ref(0)
 
-// 选择日期范围
 const selectDateRange = (value: string) => {
   currentDateRange.value = value
   loadStats(value)
 }
 
-// 加载统计数据
 const loadStats = async (days: string) => {
   const endDate = new Date()
   const startDate = new Date()
@@ -112,13 +96,9 @@ const loadStats = async (days: string) => {
   if (result.success) {
     stats.value = traderStore.traderStats
     calculateStats()
-    nextTick(() => {
-      renderChart()
-    })
   }
 }
 
-// 计算统计数据
 const calculateStats = () => {
   if (stats.value.length === 0) return
 
@@ -129,17 +109,9 @@ const calculateStats = () => {
   positiveDays.value = pnls.filter(p => p > 0).length
 }
 
-// 格式化盈亏
 const formatPnl = (value: string) => {
   const num = parseFloat(value) || 0
   return num > 0 ? `+${num.toFixed(2)}` : num.toFixed(2)
-}
-
-// 渲染图表
-const renderChart = () => {
-  // 简单图表渲染逻辑
-  // 实际项目中建议使用 ucharts 完整功能
-  console.log('Render chart with data:', stats.value)
 }
 
 onLoad((options) => {
@@ -157,7 +129,6 @@ onLoad((options) => {
   padding-bottom: 40rpx;
 }
 
-// 日期筛选
 .date-filter {
   background: #FFFFFF;
   padding: 20rpx 0;
@@ -175,7 +146,6 @@ onLoad((options) => {
       color: #666666;
       border-radius: 30rpx;
       background: #F5F5F5;
-      transition: all 0.3s;
 
       &.active {
         background: #00DC82;
@@ -185,32 +155,6 @@ onLoad((options) => {
   }
 }
 
-// 图表区域
-.chart-section {
-  background: #FFFFFF;
-  margin: 20rpx;
-  border-radius: 20rpx;
-  padding: 30rpx;
-
-  .section-title {
-    font-size: 30rpx;
-    font-weight: bold;
-    color: #333333;
-    margin-bottom: 24rpx;
-  }
-
-  .chart-wrapper {
-    height: 400rpx;
-    width: 100%;
-
-    .chart-canvas {
-      width: 100%;
-      height: 100%;
-    }
-  }
-}
-
-// 统计摘要
 .stats-section {
   background: #FFFFFF;
   margin: 20rpx;

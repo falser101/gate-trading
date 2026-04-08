@@ -6,60 +6,50 @@
     </view>
 
     <view class="register-form">
-      <u-form :model="form" ref="formRef" label-width="0">
-        <u-form-item prop="email">
-          <u-input
-            v-model="form.email"
-            placeholder="请输入邮箱"
-            type="email"
-            prefix-icon="envelope"
-            :border="false"
-            class="input-field"
-          />
-        </u-form-item>
+      <view class="input-item">
+        <input
+          v-model="form.email"
+          type="text"
+          placeholder="请输入邮箱"
+          class="input-field"
+        />
+      </view>
 
-        <u-form-item prop="password">
-          <u-input
-            v-model="form.password"
-            placeholder="请输入密码（至少 6 位）"
-            type="password"
-            prefix-icon="lock"
-            :border="false"
-            class="input-field"
-          />
-        </u-form-item>
+      <view class="input-item">
+        <input
+          v-model="form.password"
+          type="password"
+          placeholder="请输入密码（至少 6 位）"
+          class="input-field"
+        />
+      </view>
 
-        <u-form-item prop="confirmPassword">
-          <u-input
-            v-model="form.confirmPassword"
-            placeholder="请确认密码"
-            type="password"
-            prefix-icon="lock"
-            :border="false"
-            class="input-field"
-          />
-        </u-form-item>
-      </u-form>
+      <view class="input-item">
+        <input
+          v-model="form.confirmPassword"
+          type="password"
+          placeholder="请确认密码"
+          class="input-field"
+        />
+      </view>
 
       <view class="register-buttons">
-        <u-button
+        <button
           type="primary"
-          size="large"
           :loading="loading"
           @click="handleRegister"
           class="register-btn"
         >
           立即注册
-        </u-button>
+        </button>
 
-        <u-button
-          type="info"
-          size="large"
+        <button
+          type="default"
           @click="goToLogin"
           class="login-btn"
         >
           已有账号？去登录
-        </u-button>
+        </button>
       </view>
     </view>
   </view>
@@ -70,7 +60,6 @@ import { ref, reactive } from 'vue'
 import { useAuthStore } from '@/store/modules/auth'
 
 const authStore = useAuthStore()
-const formRef = ref<any>(null)
 const loading = ref(false)
 
 const form = reactive({
@@ -80,7 +69,6 @@ const form = reactive({
 })
 
 const handleRegister = async () => {
-  // 验证表单
   if (!form.email || !form.password || !form.confirmPassword) {
     uni.showToast({
       title: '请填写完整信息',
@@ -114,7 +102,6 @@ const handleRegister = async () => {
         title: '注册成功',
         icon: 'success'
       })
-      // 跳转到首页
       setTimeout(() => {
         uni.switchTab({
           url: '/pages/index/index'
@@ -175,19 +162,26 @@ const goToLogin = () => {
   padding: 40rpx;
   box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.1);
 
-  .input-field {
-    padding: 24rpx 0;
-    font-size: 32rpx;
+  .input-item {
+    margin-bottom: 24rpx;
+
+    .input-field {
+      padding: 24rpx;
+      font-size: 32rpx;
+      background: #F5F5F5;
+      border-radius: 12rpx;
+    }
   }
 }
 
 .register-buttons {
-  margin-top: 60rpx;
+  margin-top: 40rpx;
 
   .register-btn {
-    margin-bottom: 24rpx;
+    margin-bottom: 20rpx;
     background: linear-gradient(135deg, #00DC82 0%, #00C775 100%);
     border: none;
+    color: #FFFFFF;
   }
 
   .login-btn {

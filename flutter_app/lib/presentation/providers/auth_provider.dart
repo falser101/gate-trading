@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import '../../core/network/api_client.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../data/models/user_model.dart';
@@ -32,88 +32,94 @@ class AuthState {
   }
 }
 
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
-
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(ref.watch(apiClientProvider));
-});
-
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-  return AuthNotifier(ref.watch(authRepositoryProvider));
-});
-
-class AuthNotifier extends StateNotifier<AuthState> {
+class AuthProvider extends ChangeNotifier {
   final AuthRepository _repository;
+  AuthState _state = AuthState();
 
-  AuthNotifier(this._repository) : super(AuthState()) {
+  AuthProvider({ApiClient? apiClient})
+      : _repository = AuthRepository(apiClient ?? ApiClient()) {
     _checkAuth();
   }
+
+  AuthState get state => _state;
+  UserModel? get user => _state.user;
+  bool get isAuthenticated => _state.isAuthenticated;
+  bool get isLoading => _state.isLoading;
+  String? get error => _state.error;
 
   Future<void> _checkAuth() async {
     final token = await _repository.apiClient.getToken();
     if (token != null) {
       final user = await _repository.getUser();
       if (user != null) {
-        state = state.copyWith(isAuthenticated: true, user: user);
+        _state = _state.copyWith(isAuthenticated: true, user: user);
         updateAuthState(true);
+        notifyListeners();
       }
     }
   }
 
   Future<bool> login(String email, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    _state = _state.copyWith(isLoading: true, error: null);
+    notifyListeners();
     try {
       await _repository.login(email, password);
       final user = await _repository.getUser();
-      state = state.copyWith(
+      _state = _state.copyWith(
         isLoading: false,
         isAuthenticated: true,
         user: user,
       );
       updateAuthState(true);
+      notifyListeners();
       return true;
     } catch (e) {
-      state = state.copyWith(
+      _state = _state.copyWith(
         isLoading: false,
         error: e.toString(),
       );
+      notifyListeners();
       return false;
     }
   }
 
   Future<bool> register(String email, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    _state = _state.copyWith(isLoading: true, error: null);
+    notifyListeners();
     try {
       await _repository.register(email, password);
       final user = await _repository.getUser();
-      state = state.copyWith(
+      _state = _state.copyWith(
         isLoading: false,
         isAuthenticated: true,
         user: user,
       );
       updateAuthState(true);
+      notifyListeners();
       return true;
     } catch (e) {
-      state = state.copyWith(
+      _state = _state.copyWith(
         isLoading: false,
         error: e.toString(),
       );
+      notifyListeners();
       return false;
     }
   }
 
   Future<void> logout() async {
     await _repository.logout();
-    state = AuthState();
+    _state = AuthState();
     updateAuthState(false);
+    notifyListeners();
   }
 
   Future<void> bindApiKey(String apiKey, String apiSecret) async {
     await _repository.bindApiKey(apiKey, apiSecret);
-    // 刷新用户数据
     final user = await _repository.getUser();
     if (user != null) {
-      state = state.copyWith(user: user);
+      _state = _state.copyWith(user: user);
+      notifyListeners();
     }
   }
 }

@@ -1,8 +1,0 @@
-/node_modules
-/dist
-/build
-/.idea
-/.vscode
-/.DS_Store
-/*.local
-/uni_modules/custom

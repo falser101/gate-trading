@@ -8,7 +8,6 @@
         <view class="trader-meta">
           <text class="tag">{{ trader.status === 'running' ? '运行中' : '已停止' }}</text>
           <text v-if="trader.is_curated" class="tag curated">精选</text>
-          <text class="tag">{{ trader.exchange }}</text>
         </view>
       </view>
     </view>
@@ -79,28 +78,15 @@
     <!-- 统计图表按钮 -->
     <view class="detail-section">
       <view class="section-title">历史表现</view>
-      <u-button
-        type="primary"
-        @click="goToStats"
-        class="chart-btn"
-      >
+      <button type="primary" @click="goToStats" class="chart-btn">
         查看收益曲线
-      </u-button>
-    </view>
-
-    <!-- 底部操作栏 -->
-    <view class="bottom-bar">
-      <view class="bar-info">
-        <text class="label">最后更新</text>
-        <text class="value">{{ formatTime(trader.last_synced_at) }}</text>
-      </view>
+      </button>
     </view>
   </view>
 
   <!-- 加载状态 -->
   <view v-else-if="loading" class="loading-state">
-    <u-loading mode="circle" size="60"></u-loading>
-    <text class="loading-text">加载中...</text>
+    <text>加载中...</text>
   </view>
 </template>
 
@@ -116,21 +102,18 @@ const traderId = ref('')
 const trader = computed(() => traderStore.selectedTrader)
 const loading = computed(() => traderStore.loading)
 
-// 格式化盈亏值
 const formatPnlValue = (value: string) => {
   const num = parseFloat(value)
   if (isNaN(num)) return '0'
   return num > 0 ? `+${formatNumber(num)}` : formatNumber(num)
 }
 
-// 获取盈亏样式类
 const getPnlClass = (value: string) => {
   const num = parseFloat(value)
   if (isNaN(num)) return ''
   return num >= 0 ? 'up' : 'down'
 }
 
-// 解析标签
 const parseLabels = (labelsStr: string) => {
   try {
     return JSON.parse(labelsStr)
@@ -139,13 +122,6 @@ const parseLabels = (labelsStr: string) => {
   }
 }
 
-// 格式化时间
-const formatTime = (timeStr: string) => {
-  if (!timeStr) return '-'
-  return formatRelativeTime(timeStr)
-}
-
-// 跳转统计页面
 const goToStats = () => {
   if (traderId.value) {
     uni.navigateTo({
@@ -154,7 +130,6 @@ const goToStats = () => {
   }
 }
 
-// 加载详情
 const loadDetail = async (id: string) => {
   traderId.value = id
   await traderStore.fetchTraderDetail(id)
@@ -171,10 +146,9 @@ onLoad((options) => {
 .detail-container {
   min-height: 100vh;
   background: #F5F5F5;
-  padding-bottom: 140rpx;
+  padding-bottom: 40rpx;
 }
 
-// 交易员头部
 .trader-header {
   background: linear-gradient(135deg, #00DC82 0%, #00C775 100%);
   padding: 40rpx;
@@ -218,7 +192,6 @@ onLoad((options) => {
   }
 }
 
-// 核心数据
 .core-stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -269,7 +242,6 @@ onLoad((options) => {
   }
 }
 
-// 详细数据
 .detail-section {
   margin: 30rpx;
   background: #FFFFFF;
@@ -337,48 +309,17 @@ onLoad((options) => {
     font-size: 30rpx;
     background: linear-gradient(135deg, #00DC82, #00C775);
     border: none;
+    color: #FFFFFF;
   }
 }
 
-// 底部操作栏
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 120rpx;
-  background: #FFFFFF;
-  border-top: 1rpx solid #EEEEEE;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 30rpx;
-  padding-bottom: calc(120rpx - env(safe-area-inset-bottom));
-
-  .bar-info {
-    .label {
-      display: block;
-      font-size: 24rpx;
-      color: #999999;
-    }
-
-    .value {
-      font-size: 26rpx;
-      color: #666666;
-    }
-  }
-}
-
-// 加载状态
 .loading-state {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
 
-  .loading-text {
-    margin-top: 30rpx;
+  text {
     font-size: 28rpx;
     color: #999999;
   }

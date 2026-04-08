@@ -12,48 +12,35 @@
     </view>
 
     <view class="form-section">
-      <u-form :model="form" ref="formRef" label-width="140">
-        <u-form-item label="API Key" prop="apiKey">
-          <u-input
-            v-model="form.apiKey"
-            placeholder="请输入 API Key"
-            :border="false"
-            class="input-field"
-          />
-        </u-form-item>
+      <view class="input-item">
+        <text class="input-label">API Key</text>
+        <input
+          v-model="form.apiKey"
+          type="text"
+          placeholder="请输入 API Key"
+          class="input-field"
+        />
+      </view>
 
-        <u-form-item label="API Secret" prop="apiSecret">
-          <u-input
-            v-model="form.apiSecret"
-            placeholder="请输入 API Secret"
-            type="password"
-            :border="false"
-            class="input-field"
-          />
-        </u-form-item>
-      </u-form>
+      <view class="input-item">
+        <text class="input-label">API Secret</text>
+        <input
+          v-model="form.apiSecret"
+          type="password"
+          placeholder="请输入 API Secret"
+          class="input-field"
+        />
+      </view>
     </view>
 
     <view class="button-section">
-      <u-button
-        type="primary"
-        size="large"
-        :loading="saving"
-        @click="handleSave"
-        class="save-btn"
-      >
+      <button type="primary" :loading="saving" @click="handleSave" class="save-btn">
         保存
-      </u-button>
+      </button>
 
-      <u-button
-        type="info"
-        size="large"
-        @click="handleTest"
-        :loading="testing"
-        class="test-btn"
-      >
+      <button type="default" :loading="testing" @click="handleTest" class="test-btn">
         测试连接
-      </u-button>
+      </button>
     </view>
 
     <!-- 测试结果 -->
@@ -69,7 +56,6 @@ import { useAuthStore } from '@/store/modules/auth'
 import { bindApiKey } from '@/api/user'
 
 const authStore = useAuthStore()
-const formRef = ref<any>(null)
 const saving = ref(false)
 const testing = ref(false)
 const testResult = ref<{ success: boolean; message: string } | null>(null)
@@ -79,7 +65,6 @@ const form = reactive({
   apiSecret: ''
 })
 
-// 保存 API Key
 const handleSave = async () => {
   if (!form.apiKey || !form.apiSecret) {
     uni.showToast({
@@ -97,7 +82,6 @@ const handleSave = async () => {
       api_secret: form.apiSecret
     })
 
-    // 更新用户状态
     authStore.updateApiKeyStatus(true)
 
     uni.showToast({
@@ -118,7 +102,6 @@ const handleSave = async () => {
   }
 }
 
-// 测试连接
 const handleTest = async () => {
   if (!form.apiKey || !form.apiSecret) {
     uni.showToast({
@@ -131,8 +114,6 @@ const handleTest = async () => {
   testing.value = true
   testResult.value = null
 
-  // 这里可以调用后端测试接口
-  // 暂时模拟测试
   setTimeout(() => {
     testResult.value = {
       success: true,
@@ -150,7 +131,6 @@ const handleTest = async () => {
   padding: 30rpx;
 }
 
-// 提示卡片
 .tips-card {
   background: linear-gradient(135deg, #00DC82 0%, #00C775 100%);
   border-radius: 20rpx;
@@ -185,20 +165,31 @@ const handleTest = async () => {
   }
 }
 
-// 表单区域
 .form-section {
   background: #FFFFFF;
   border-radius: 20rpx;
   padding: 20rpx 30rpx;
   margin-bottom: 30rpx;
 
-  .input-field {
-    padding: 24rpx 0;
-    font-size: 28rpx;
+  .input-item {
+    margin-bottom: 24rpx;
+
+    .input-label {
+      display: block;
+      font-size: 28rpx;
+      color: #666666;
+      margin-bottom: 12rpx;
+    }
+
+    .input-field {
+      padding: 24rpx;
+      font-size: 28rpx;
+      background: #F5F5F5;
+      border-radius: 12rpx;
+    }
   }
 }
 
-// 按钮区域
 .button-section {
   .save-btn {
     margin-bottom: 20rpx;
@@ -206,6 +197,7 @@ const handleTest = async () => {
     font-size: 30rpx;
     background: linear-gradient(135deg, #00DC82, #00C775);
     border: none;
+    color: #FFFFFF;
   }
 
   .test-btn {
@@ -217,7 +209,6 @@ const handleTest = async () => {
   }
 }
 
-// 测试结果
 .test-result {
   margin-top: 30rpx;
   padding: 24rpx;

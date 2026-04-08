@@ -39,25 +39,21 @@
 
     <!-- 退出登录按钮 -->
     <view class="logout-section">
-      <u-button
-        type="info"
-        size="large"
-        @click="handleLogout"
-        class="logout-btn"
-      >
+      <button type="default" @click="handleLogout" class="logout-btn">
         退出登录
-      </u-button>
+      </button>
     </view>
 
     <!-- 关于弹窗 -->
-    <u-modal
-      v-model:show="showAbout"
-      title="关于"
-      :content="'Gate Copy Trading v1.0.0\n\n专业的 Gate.io 跟单交易平台'"
-      show-cancel-button
-      @confirm="showAbout = false"
-      @cancel="showAbout = false"
-    ></u-modal>
+    <view v-if="showAbout" class="modal-overlay" @click="showAbout = false">
+      <view class="modal-content" @click.stop>
+        <view class="modal-title">关于</view>
+        <view class="modal-text">Gate Copy Trading v1.0.0
+
+专业的 Gate.io 跟单交易平台</view>
+        <button type="primary" @click="showAbout = false" class="modal-btn">确定</button>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -78,14 +74,12 @@ const memberSince = computed(() => {
   return '-'
 })
 
-// 跳转 API Key 配置页
 const goToApiKey = () => {
   uni.navigateTo({
     url: '/pages/settings/api-key'
   })
 }
 
-// 退出登录
 const handleLogout = () => {
   uni.showModal({
     title: '确认退出',
@@ -93,17 +87,12 @@ const handleLogout = () => {
     success: (res) => {
       if (res.confirm) {
         authStore.logout()
-        uni.showToast({
-          title: '已退出登录',
-          icon: 'success'
-        })
       }
     }
   })
 }
 
 onMounted(() => {
-  // 刷新用户信息
   authStore.refreshUserInfo()
 })
 </script>
@@ -114,7 +103,6 @@ onMounted(() => {
   background: #F5F5F5;
 }
 
-// 用户头部
 .user-header {
   background: linear-gradient(135deg, #00DC82 0%, #00C775 100%);
   padding: 60rpx 40rpx 40rpx;
@@ -127,7 +115,6 @@ onMounted(() => {
     border-radius: 50%;
     background: #FFFFFF;
     padding: 6rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
 
     .avatar {
       width: 100%;
@@ -155,7 +142,6 @@ onMounted(() => {
   }
 }
 
-// 功能列表
 .menu-list {
   margin: 30rpx;
   background: #FFFFFF;
@@ -221,16 +207,62 @@ onMounted(() => {
   }
 }
 
-// 退出登录
 .logout-section {
   margin: 60rpx 30rpx;
 
   .logout-btn {
+    width: 100%;
     height: 88rpx;
     font-size: 30rpx;
     background: #FFFFFF;
     color: #FF4D4D;
     border: 2rpx solid #FF4D4D;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+
+  .modal-content {
+    background: #FFFFFF;
+    border-radius: 20rpx;
+    padding: 40rpx;
+    width: 80%;
+    max-width: 600rpx;
+
+    .modal-title {
+      font-size: 32rpx;
+      font-weight: bold;
+      color: #333333;
+      text-align: center;
+      margin-bottom: 24rpx;
+    }
+
+    .modal-text {
+      font-size: 28rpx;
+      color: #666666;
+      text-align: center;
+      margin-bottom: 30rpx;
+      white-space: pre-line;
+    }
+
+    .modal-btn {
+      width: 100%;
+      height: 80rpx;
+      font-size: 30rpx;
+      background: linear-gradient(135deg, #00DC82, #00C775);
+      border: none;
+      color: #FFFFFF;
+    }
   }
 }
 </style>

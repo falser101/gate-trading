@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/router.dart';
 import 'core/theme/app_theme.dart';
+import 'presentation/providers/auth_provider.dart';
+import 'presentation/providers/strategy_provider.dart';
 import 'presentation/providers/copytrading_provider.dart';
 
 void main() async {
@@ -11,6 +13,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => StrategyProvider()),
         ChangeNotifierProvider(create: (_) => CopytradingProvider()),
       ],
       child: const GateTradingApp(),
