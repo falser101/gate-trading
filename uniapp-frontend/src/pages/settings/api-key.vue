@@ -10,40 +10,20 @@
         <text class="tips-warning">注意：请确保 API Key 具有「读取」和「交易」权限</text>
       </view>
     </view>
-
     <view class="form-section">
       <view class="input-item">
         <text class="input-label">API Key</text>
-        <input
-          v-model="form.apiKey"
-          type="text"
-          placeholder="请输入 API Key"
-          class="input-field"
-        />
+        <input v-model="form.apiKey" type="text" placeholder="请输入 API Key" class="input-field" />
       </view>
-
       <view class="input-item">
         <text class="input-label">API Secret</text>
-        <input
-          v-model="form.apiSecret"
-          type="password"
-          placeholder="请输入 API Secret"
-          class="input-field"
-        />
+        <input v-model="form.apiSecret" type="password" placeholder="请输入 API Secret" class="input-field" />
       </view>
     </view>
-
     <view class="button-section">
-      <button type="primary" :loading="saving" @click="handleSave" class="save-btn">
-        保存
-      </button>
-
-      <button type="default" :loading="testing" @click="handleTest" class="test-btn">
-        测试连接
-      </button>
+      <button type="primary" :loading="saving" @click="handleSave" class="save-btn">保存</button>
+      <button type="default" :loading="testing" @click="handleTest" class="test-btn">测试连接</button>
     </view>
-
-    <!-- 测试结果 -->
     <view v-if="testResult" :class="['test-result', testResult.success ? 'success' : 'error']">
       <text>{{ testResult.message }}</text>
     </view>
@@ -59,44 +39,21 @@ const authStore = useAuthStore()
 const saving = ref(false)
 const testing = ref(false)
 const testResult = ref<{ success: boolean; message: string } | null>(null)
-
-const form = reactive({
-  apiKey: '',
-  apiSecret: ''
-})
+const form = reactive({ apiKey: '', apiSecret: '' })
 
 const handleSave = async () => {
   if (!form.apiKey || !form.apiSecret) {
-    uni.showToast({
-      title: '请填写完整信息',
-      icon: 'none'
-    })
+    uni.showToast({ title: '请填写完整信息', icon: 'none' })
     return
   }
-
   saving.value = true
-
   try {
-    await bindApiKey({
-      api_key: form.apiKey,
-      api_secret: form.apiSecret
-    })
-
+    await bindApiKey({ api_key: form.apiKey, api_secret: form.apiSecret })
     authStore.updateApiKeyStatus(true)
-
-    uni.showToast({
-      title: '保存成功',
-      icon: 'success'
-    })
-
-    setTimeout(() => {
-      uni.navigateBack()
-    }, 1000)
+    uni.showToast({ title: '保存成功', icon: 'success' })
+    setTimeout(() => uni.navigateBack(), 1000)
   } catch (error: any) {
-    uni.showToast({
-      title: error.message || '保存失败',
-      icon: 'none'
-    })
+    uni.showToast({ title: error.message || '保存失败', icon: 'none' })
   } finally {
     saving.value = false
   }
@@ -104,21 +61,13 @@ const handleSave = async () => {
 
 const handleTest = async () => {
   if (!form.apiKey || !form.apiSecret) {
-    uni.showToast({
-      title: '请先填写 API 信息',
-      icon: 'none'
-    })
+    uni.showToast({ title: '请先填写 API 信息', icon: 'none' })
     return
   }
-
   testing.value = true
   testResult.value = null
-
   setTimeout(() => {
-    testResult.value = {
-      success: true,
-      message: 'API Key 有效，连接正常'
-    }
+    testResult.value = { success: true, message: 'API Key 有效，连接正常' }
     testing.value = false
   }, 1500)
 }
@@ -130,100 +79,80 @@ const handleTest = async () => {
   background: #F5F5F5;
   padding: 30rpx;
 }
-
 .tips-card {
-  background: linear-gradient(135deg, #00DC82 0%, #00C775 100%);
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-
+  background: linear-gradient(135deg, #00DC82, #00C775);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
   .tips-title {
     display: block;
-    font-size: 30rpx;
+    font-size: 28rpx;
     font-weight: bold;
-    color: #FFFFFF;
-    margin-bottom: 20rpx;
+    color: #FFF;
+    margin-bottom: 16rpx;
   }
-
   .tips-content {
     display: flex;
     flex-direction: column;
-    gap: 12rpx;
-
+    gap: 10rpx;
     .tips-step {
-      font-size: 26rpx;
-      color: rgba(255, 255, 255, 0.95);
-    }
-
-    .tips-warning {
       font-size: 24rpx;
+      color: rgba(255,255,255,0.95);
+    }
+    .tips-warning {
+      font-size: 22rpx;
       color: #FFE4E4;
-      margin-top: 16rpx;
-      padding-top: 16rpx;
-      border-top: 1rpx solid rgba(255, 255, 255, 0.3);
+      margin-top: 12rpx;
+      padding-top: 12rpx;
+      border-top: 1rpx solid rgba(255,255,255,0.3);
     }
   }
 }
-
 .form-section {
-  background: #FFFFFF;
-  border-radius: 20rpx;
-  padding: 20rpx 30rpx;
-  margin-bottom: 30rpx;
-
+  background: #FFF;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
   .input-item {
-    margin-bottom: 24rpx;
-
+    margin-bottom: 16rpx;
     .input-label {
       display: block;
-      font-size: 28rpx;
-      color: #666666;
-      margin-bottom: 12rpx;
+      font-size: 26rpx;
+      color: #666;
+      margin-bottom: 8rpx;
     }
-
     .input-field {
-      padding: 24rpx;
-      font-size: 28rpx;
+      padding: 20rpx;
+      font-size: 26rpx;
       background: #F5F5F5;
       border-radius: 12rpx;
     }
   }
 }
-
 .button-section {
   .save-btn {
-    margin-bottom: 20rpx;
-    height: 88rpx;
-    font-size: 30rpx;
+    margin-bottom: 16rpx;
+    height: 80rpx;
+    font-size: 28rpx;
     background: linear-gradient(135deg, #00DC82, #00C775);
     border: none;
-    color: #FFFFFF;
+    color: #FFF;
   }
-
   .test-btn {
-    height: 88rpx;
-    font-size: 30rpx;
-    background: #FFFFFF;
+    height: 80rpx;
+    font-size: 28rpx;
+    background: #FFF;
     color: #00DC82;
     border: 2rpx solid #00DC82;
   }
 }
-
 .test-result {
-  margin-top: 30rpx;
-  padding: 24rpx;
-  border-radius: 16rpx;
+  margin-top: 20rpx;
+  padding: 20rpx;
+  border-radius: 12rpx;
   text-align: center;
-  font-size: 28rpx;
-
-  &.success {
-    background: #F0FDF5;
-    color: #00DC82;
-  }
-
-  &.error {
-    background: #FFF5F5;
-    color: #FF4D4D;
-  }
+  font-size: 26rpx;
+  &.success { background: #F0FDF5; color: #00DC82; }
+  &.error { background: #FFF5F5; color: #FF4D4D; }
 }
 </style>

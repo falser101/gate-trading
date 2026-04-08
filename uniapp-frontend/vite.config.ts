@@ -1,10 +1,8 @@
-import { defineConfig } from 'vite'
-import uni from '@dcloudio/vite-plugin-uni'
+import { defineConfig } from "vite";
+import uni from "@dcloudio/vite-plugin-uni";
 
 export default defineConfig({
-  plugins: [
-    uni()
-  ],
+  plugins: [uni()],
   server: {
     port: 8081,
     proxy: {
@@ -14,4 +12,4 @@ export default defineConfig({
       }
     }
   }
-})
+});

@@ -1,8 +1,4 @@
 {
-  "easycom": {
-    "autoscan": true,
-    "custom": {}
-  },
   "pages": [
     {
       "path": "pages/index/index",

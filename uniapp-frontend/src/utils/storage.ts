@@ -1,6 +1,4 @@
-// 本地存储封装
 export const storage = {
-  // 设置存储
   set: (key: string, value: any): void => {
     try {
       const str = typeof value === 'string' ? value : JSON.stringify(value)
@@ -10,7 +8,6 @@ export const storage = {
     }
   },
 
-  // 获取存储
   get: <T>(key: string): T | null => {
     try {
       const str = uni.getStorageSync(key)
@@ -26,7 +23,6 @@ export const storage = {
     }
   },
 
-  // 移除存储
   remove: (key: string): void => {
     try {
       uni.removeStorageSync(key)
@@ -35,7 +31,6 @@ export const storage = {
     }
   },
 
-  // 清空存储
   clear: (): void => {
     try {
       uni.clearStorageSync()

@@ -12,17 +12,6 @@ export interface ApiKeyRequest {
   api_secret: string
 }
 
-// 获取当前用户信息
-export const getUser = () => {
-  return get<User>('/user')
-}
-
-// 绑定 API Key
-export const bindApiKey = (data: ApiKeyRequest) => {
-  return post('/user/api-key', data)
-}
-
-// 更新 API Key
-export const updateApiKey = (data: ApiKeyRequest) => {
-  return put('/user/api-key', data)
-}
+export const getUser = () => get<User>('/user')
+export const bindApiKey = (data: ApiKeyRequest) => post('/user/api-key', data)
+export const updateApiKey = (data: ApiKeyRequest) => put('/user/api-key', data)
