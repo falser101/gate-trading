@@ -47,10 +47,12 @@ const handleLogout = () => {
 }
 
 onMounted(() => {
-  // 只在已登录时获取用户信息
-  if (authStore.isLoggedIn) {
-    authStore.fetchUserInfo()
+  // 未登录时跳转登录页
+  if (!authStore.isLoggedIn) {
+    uni.reLaunch({ url: '/pages/auth/login' })
+    return
   }
+  authStore.fetchUserInfo()
 })
 </script>
 
