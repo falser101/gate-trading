@@ -1,0 +1,80 @@
+{
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^u--(.+)": "uview-ui/components/u-$1/u-$1.vue"
+    }
+  },
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "跟单交易",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/trader/detail",
+      "style": {
+        "navigationBarTitleText": "交易员详情"
+      }
+    },
+    {
+      "path": "pages/stats/chart",
+      "style": {
+        "navigationBarTitleText": "历史统计"
+      }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/auth/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
+      "path": "pages/mine/mine",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/settings/api-key",
+      "style": {
+        "navigationBarTitleText": "配置 API Key"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "Gate Copy Trading",
+    "navigationBarBackgroundColor": "#00DC82",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#00DC82",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/images/home.png",
+        "selectedIconPath": "static/images/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "iconPath": "static/images/mine.png",
+        "selectedIconPath": "static/images/mine-active.png",
+        "text": "我的"
+      }
+    ]
+  }
+}
