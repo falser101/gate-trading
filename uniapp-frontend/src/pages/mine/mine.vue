@@ -46,7 +46,12 @@ const handleLogout = () => {
   })
 }
 
-onMounted(() => authStore.refreshUserInfo())
+onMounted(() => {
+  // 只在已登录时获取用户信息
+  if (authStore.isLoggedIn) {
+    authStore.fetchUserInfo()
+  }
+})
 </script>
 
 <style lang="scss" scoped>
